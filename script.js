@@ -1,62 +1,101 @@
-// Typing effect
+document.addEventListener('DOMContentLoaded', () => {
+  // ─── Loading Animation ─────────────────────────────────────
+  const loading = document.getElementById('loading');
+  const typed = document.getElementById('typed-command');
+  const text = "whoami && cat ~/.profile";
+  let i = 0;
 
-const text = "Cybersecurity Student | Ethical Hacking | Network Security";
-let index = 0;
+  function type() {
+    if (i < text.length) {
+      typed.textContent += text.charAt(i);
+      i++;
+      setTimeout(type, 80);
+    } else {
+      setTimeout(() => {
+        gsap.to(loading, {
+          opacity: 0,
+          duration: 0.8,
+          onComplete: () => loading.style.display = 'none'
+        });
+        startPageAnimations();
+      }, 1200);
+    }
+  }
 
-function type() {
+  setTimeout(type, 600);
 
-document.getElementById("typing").innerHTML =
-text.slice(0, index++);
+  // ─── GSAP Animations ───────────────────────────────────────
+  function startPageAnimations() {
+    gsap.from(".navbar",       { y: -80, opacity: 0, duration: 1.2, ease: "power3.out" });
+    gsap.from(".hero-title",   { y: 100, opacity: 0, duration: 1.4, delay: 0.4, ease: "power4.out" });
+    gsap.from(".hero-subtitle",{ y: 60,  opacity: 0, duration: 1.2, delay: 0.7 });
+    gsap.from(".cta-buttons",  { y: 40,  opacity: 0, duration: 1,   delay: 1, stagger: 0.2 });
 
-if(index > text.length){
-index = 0;
-}
+    // Scroll animations
+    gsap.utils.toArray(".glass-card, .skill-card, .project-card").forEach(el => {
+      gsap.from(el, {
+        scrollTrigger: {
+          trigger: el,
+          start: "top 85%",
+          toggleActions: "play none none reverse"
+        },
+        y: 60,
+        opacity: 0,
+        duration: 1.1,
+        ease: "power3.out"
+      });
+    });
 
-setTimeout(type,100);
-}
+    gsap.utils.toArray(".section-title").forEach(el => {
+      gsap.from(el, {
+        scrollTrigger: {
+          trigger: el,
+          start: "top 85%"
+        },
+        scale: 0.85,
+        opacity: 0,
+        duration: 1.3,
+        ease: "power3.out"
+      });
+    });
+  }
 
-type();
-
-
-
-// Matrix Rain Effect
-
-const canvas = document.getElementById("matrix");
-const ctx = canvas.getContext("2d");
-
-canvas.height = window.innerHeight;
-canvas.width = window.innerWidth;
-
-const letters = "01";
-const fontSize = 14;
-
-const columns = canvas.width/fontSize;
-
-const drops = [];
-
-for(let x = 0; x < columns; x++)
-drops[x] = 1;
-
-function draw(){
-
-ctx.fillStyle = "rgba(0,0,0,0.05)";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-ctx.fillStyle = "#00ff9c";
-ctx.font = fontSize + "px monospace";
-
-for(let i=0;i<drops.length;i++){
-
-const text = letters[Math.floor(Math.random()*letters.length)];
-
-ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-
-if(drops[i]*fontSize > canvas.height && Math.random()>0.975)
-drops[i]=0;
-
-drops[i]++;
-}
-
-}
-
-setInterval(draw,33);
+  // ─── Particles ─────────────────────────────────────────────
+  particlesJS("particles-js", {
+    particles: {
+      number: { value: 70, density: { enable: true, value_area: 900 } },
+      color: { value: ["#3b82f6", "#8b5cf6", "#60a5fa"] },
+      shape: { type: "circle" },
+      opacity: { value: 0.45, random: true },
+      size: { value: 3.2, random: true },
+      line_linked: {
+        enable: true,
+        distance: 140,
+        color: "#3b82f6",
+        opacity: 0.25,
+        width: 1
+      },
+      move: {
+        enable: true,
+        speed: 1.4,
+        direction: "none",
+        random: true,
+        straight: false,
+        out_mode: "out"
+      }
+    },
+    interactivity: {
+      detect_on: "canvas",
+      events: {
+        onhover: { enable: true, mode: "grab" },
+        onclick: { enable: true, mode: "push" },
+        resize: true
+      },
+      modes: {
+        grab: { distance: 160, line_linked: { opacity: 0.7 } },
+        push: { particles_nb: 4 }
+      }
+    },
+    retina_detect: true
+  });
+});
